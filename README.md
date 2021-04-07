@@ -5,8 +5,8 @@
 Blah blah.
 
 <!-- Links: -->
-[workflow-image]: https://github.com/McManning/tmp-release-ci/actions/workflows/build.yml/badge.svg
-[workflow-url]: https://github.com/McManning/tmp-release-ci/actions/workflows/build.yml
+[workflow-image]: https://github.com/McManning/tmp-release-ci/actions/workflows/ci.yml/badge.svg
+[workflow-url]: https://github.com/McManning/tmp-release-ci/actions/workflows/ci.yml
 
 [nuget-image]: https://img.shields.io/nuget/v/SharpRNA.svg
 [nuget-url]: https://www.nuget.org/packages/SharpRNA/
