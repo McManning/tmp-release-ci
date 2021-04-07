@@ -1,11 +1,12 @@
 # tmp-release-ci
-![][workflows-image]
+[![Publish Workflow][publish-workflow-image]][publish-workflow-url]
 [![NuGet Release][nuget-image]][nuget-url]
 
 Blah blah.
 
 <!-- Links: -->
-[workflows-image]: https://github.com/McManning/tmp-release-ci/actions/workflows/publish.yml/badge.svg
+[publish-workflow-image]: https://github.com/McManning/tmp-release-ci/actions/workflows/publish.yml/badge.svg
+[publish-workflow-url]: https://github.com/McManning/tmp-release-ci/actions/workflows/publish.yml
 
 [nuget-image]: https://img.shields.io/nuget/v/SharpRNA.svg
 [nuget-url]: https://www.nuget.org/packages/SharpRNA/
