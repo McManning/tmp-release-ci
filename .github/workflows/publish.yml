@@ -15,19 +15,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Semantic Release
+    - name: Run Semantic Release
       uses: cycjimmy/semantic-release-action@v2
       id: semantic
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: echo release outputs
-      if: steps.semantic.outputs.new_release_published == 'true'
-      run: |
-        echo ${{ steps.semantic.outputs.new_release_version }}
-        echo ${{ steps.semantic.outputs.new_release_major_version }}
-        echo ${{ steps.semantic.outputs.new_release_minor_version }}
-        echo ${{ steps.semantic.outputs.new_release_patch_version }}
 
     - name: Setup .NET Core
       if: steps.semantic.outputs.new_release_published == 'true'
@@ -39,13 +31,13 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       run: dotnet build --configuration Release -p:Version=${{ steps.semantic.outputs.new_release_version }} -o packages
 
-    - name: Upload Build Artifacts
-      if: steps.semantic.outputs.new_release_published == 'true'
-      uses: actions/upload-artifact@v2
-      with:
-        name: Packages
-        path: packages/
-        if-no-files-found: error
+    # - name: Upload Build Artifacts
+    #   if: steps.semantic.outputs.new_release_published == 'true'
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: Packages
+    #     path: packages/
+    #     if-no-files-found: error
 
     - name: Publish to NuGet
       if: steps.semantic.outputs.new_release_published == 'true'
@@ -56,3 +48,8 @@ jobs:
         echo ${{ steps.semantic.outputs.new_release_patch_version }}
     # run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
     # run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/nwn-dotnet/index.json
+
+    - name: Publish to GitHub
+      if: steps.semantic.outputs.new_release_published == 'true'
+      run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/McManning/index.json
+
