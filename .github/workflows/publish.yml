@@ -10,6 +10,7 @@ on:
 
 jobs:
   publish:
+    name: Publish Packages
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

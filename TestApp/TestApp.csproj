@@ -7,6 +7,10 @@
     <Authors>Chase McManning</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/McManning/tmp-release-ci</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/McManning/tmp-release-ci</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>Copyright (c) 2021 Chase McManning</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
