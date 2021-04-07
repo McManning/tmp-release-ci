@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
     paths-ignore: [ '**.md' ]
   pull_request:
     branches: [ master ]
@@ -27,5 +27,5 @@ jobs:
     - name: Build Packages
       run: dotnet build --configuration Release --no-restore
 
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+    - name: Run Tests
+      run: dotnet test --no-restore --nologo --verbosity minimal
