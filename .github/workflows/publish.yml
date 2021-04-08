@@ -49,19 +49,19 @@ jobs:
     #   if: steps.semantic.outputs.new_release_published == 'true'
     #   run: dotnet test --no-restore --nologo --verbosity minimal
 
-    - name: Run Tests
+    - name: Run Test Suite
       if: steps.semantic.outputs.new_release_published == 'true'
       uses: zyborg/dotnet-tests-report@v1
       with:
         project_path: ${{ env.PROJECT_NAME }}.Tests
-        report_name: Test
+        report_name: Tests
         report_title: ${{ env.PROJECT_NAME }}.Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
         fail_build_on_failed_tests: True
 
     # - name: Publish to NuGet
     #   if: steps.semantic.outputs.new_release_published == 'true'
-    #   run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+    #   run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
 
     - name: Archive Packages
       if: steps.semantic.outputs.new_release_published == 'true'
