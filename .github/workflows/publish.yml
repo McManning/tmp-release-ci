@@ -40,8 +40,8 @@ jobs:
       uses: actions/create-release@v1
       with:
         tag_name: v${{ steps.semantic.outputs.new_release_version }}
-        release_name: ${{ steps.semantic.outputs.new_release_version }}
-        body: ${{ steps.semantic.new_release_notes }}
+        release_name: v${{ steps.semantic.outputs.new_release_version }}
+        body: ${{ steps.semantic.outputs.new_release_notes }}
         draft: true
         prerelease: false
       env:
