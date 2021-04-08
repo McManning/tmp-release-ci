@@ -10,8 +10,11 @@ on:
 
 jobs:
   build:
-    name: Build and Test
+    name: Build
     runs-on: windows-latest
+    env:
+      PROJECT_NAME: TestApp
+      SOLUTION_FILE: TestApp.sln
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -23,16 +26,16 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5
 
     - name: Restore NuGet Packages
-      run: nuget restore TestApp.sln
+      run: nuget restore ${{ env.SOLUTION_FILE }}
 
     - name: Build Packages
       run: msbuild TestApp.sln /p:Configuration=Release
 
-    - name: Run Tests
+    - name: Run Test Suite
       uses: zyborg/dotnet-tests-report@v1
       with:
-        project_path: TestApp.Tests
-        report_name: tests
-        report_title: TestApp Tests
+        project_path: ${{ env.PROJECT_NAME }}.Tests
+        report_name: Tests
+        report_title: ${{ env.PROJECT_NAME }}.Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
         set_check_status_from_test_outcome: True

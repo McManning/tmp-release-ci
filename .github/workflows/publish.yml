@@ -1,16 +1,20 @@
 name: Publish Packages
 
 on:
-  push:
-    branches: [ master ]
-    paths-ignore: [ '**.md' ]
+  workflow_dispatch:
+  # push:
+  #   branches: [ master ]
+  #   paths-ignore: [ '**.md' ]
 
 jobs:
   publish:
     name: Publish Packages
     runs-on: windows-latest
     env:
-      PUBLISH_DIR: publish
+      PROJECT_NAME: TestApp
+      SOLUTION_FILE: TestApp.sln
+      RELEASE_ARCHIVE_SRC: TestApp/bin/Release/netcoreapp3.1/*
+      RELEASE_ARCHIVE_NAME: TestApp-${{ runner.os }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -24,6 +28,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # MSBuild workflow to support net45
+
     - name: Setup MSBuild
       if: steps.semantic.outputs.new_release_published == 'true'
       uses: microsoft/setup-msbuild@v1.0.2
@@ -34,11 +39,11 @@ jobs:
 
     - name: Restore NuGet Packages
       if: steps.semantic.outputs.new_release_published == 'true'
-      run: nuget restore TestApp.sln
+      run: nuget restore ${{ env.SOLUTION_FILE }}
 
     - name: Build Packages
       if: steps.semantic.outputs.new_release_published == 'true'
-      run: msbuild TestApp.sln /p:Configuration=Release /p:Version=${{ steps.semantic.outputs.new_release_version }}
+      run: msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release /p:Version=${{ steps.semantic.outputs.new_release_version }}
 
     # - name: Run Tests
     #   if: steps.semantic.outputs.new_release_published == 'true'
@@ -48,9 +53,9 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       uses: zyborg/dotnet-tests-report@v1
       with:
-        project_path: TestApp.Tests
+        project_path: ${{ env.PROJECT_NAME }}.Tests
         report_name: Test
-        report_title: TestApp.Tests
+        report_title: ${{ env.PROJECT_NAME }}.Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
         fail_build_on_failed_tests: True
 
@@ -61,12 +66,11 @@ jobs:
     - name: Archive Packages
       if: steps.semantic.outputs.new_release_published == 'true'
       env:
-        PACKAGE_SRC: TestApp/bin/Release/netcoreapp3.1/*
-        # Publish at `publish/TestApp-Windows-1.2.3.zip`
-        PACKAGE_DST: ${{ env.PUBLISH_DIR }}/TestApp-${{ runner.os }}-${{ steps.semantic.outputs.new_release_version }}.zip
+        # Cache to at `.github-release/APPNAME-1.2.3.zip`
+        PACKAGE_DST: .github-release/${{ env.RELEASE_ARCHIVE_NAME }}-${{ steps.semantic.outputs.new_release_version }}.zip
       run: |
-        mkdir -p ${{ env.PUBLISH_DIR }}
-        powershell Compress-Archive -Path ${{ env.PACKAGE_SRC }} -DestinationPath $Env:GITHUB_WORKSPACE/${{ env.PACKAGE_DST }}
+        mkdir -p .github-release
+        powershell Compress-Archive -Path ${{ env.RELEASE_ARCHIVE_SRC }} -DestinationPath $Env:GITHUB_WORKSPACE/${{ env.PACKAGE_DST }}
 
     - name: Publish to GitHub
       if: steps.semantic.outputs.new_release_published == 'true'
@@ -76,7 +80,7 @@ jobs:
         body: ${{ steps.semantic.outputs.new_release_notes }}
         draft: False
         prerelease: False
-        files: ${{ env.PUBLISH_DIR }}/*
+        files: .github-release/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
