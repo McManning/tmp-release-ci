@@ -40,9 +40,18 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       run: msbuild TestApp.sln /p:Configuration=Release /p:Version=${{ steps.semantic.outputs.new_release_version }}
 
+    # - name: Run Tests
+    #   if: steps.semantic.outputs.new_release_published == 'true'
+    #   run: dotnet test --no-restore --nologo --verbosity minimal
+
     - name: Run Tests
       if: steps.semantic.outputs.new_release_published == 'true'
-      run: dotnet test --no-restore --nologo --verbosity minimal
+      uses: zyborg/dotnet-tests-report@v1
+      with:
+        project_path: TestApp.Tests
+        report_name: testapp_tests
+        report_title: TestApp Tests
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     # - name: Publish to NuGet
     #   if: steps.semantic.outputs.new_release_published == 'true'
