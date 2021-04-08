@@ -22,5 +22,11 @@ namespace TestApp.Tests
         {
             Assert.IsTrue(false);
         }
+
+        [TestMethod]
+        public void TestMethod4()
+        {
+            Assert.IsTrue(false);
+        }
     }
 }
