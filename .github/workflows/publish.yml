@@ -34,12 +34,8 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       run: dotnet build --configuration Release -p:Version=${{ steps.semantic.outputs.new_release_version }}
 
-  publish:
-    needs: [ build ]
-    runs-on: windows-latest
-    steps:
     - name: Publish to GitHub
-      if: needs.build.outputs.new_release_published == 'true'
+      if: steps.semantic.outputs.new_release_published == 'true'
       uses: cycjimmy/semantic-release-action@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
