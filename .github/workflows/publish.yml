@@ -21,6 +21,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Check outputs
+      run: |
+        echo ${{ steps.semantic.outputs.new_release_published }}
+        echo ${{ steps.semantic.outputs.new_release_version }}
+
     - name: Setup .NET Core
       if: steps.semantic.outputs.new_release_published == 'true'
       uses: actions/setup-dotnet@v1
@@ -29,7 +34,7 @@ jobs:
 
     - name: Build Packages
       if: steps.semantic.outputs.new_release_published == 'true'
-      run: dotnet build --configuration Release -p:Version=${{ steps.semantic.outputs.new_release_version }} -o packages
+      run: dotnet build --configuration Release -p:Version=${{ steps.semantic.outputs.new_release_version }}
 
     # - name: Publish to NuGet
     #   if: steps.semantic.outputs.new_release_published == 'true'
