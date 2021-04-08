@@ -56,7 +56,7 @@ jobs:
         PACKAGE_DST: ${{ env.PUBLISH_DIR }}/TestApp-${{ runner.os }}-${{ steps.semantic.outputs.new_release_version }}.zip
       run: |
         mkdir -p ${{ env.PUBLISH_DIR }}
-        powershell Compress-Archive -Path ${{ PACKAGE_SRC }} -DestinationPath $Env:GITHUB_WORKSPACE/${{ PACKAGE_DST }}
+        powershell Compress-Archive -Path ${{ env.PACKAGE_SRC }} -DestinationPath $Env:GITHUB_WORKSPACE/${{ env.PACKAGE_DST }}
 
     - name: Publish to GitHub
       if: steps.semantic.outputs.new_release_published == 'true'
@@ -64,8 +64,8 @@ jobs:
       with:
         tag_name: v${{ steps.semantic.outputs.new_release_version }}
         body: ${{ steps.semantic.outputs.new_release_notes }}
-        draft: false
-        prerelease: false
+        draft: False
+        prerelease: False
         files: ${{ env.PUBLISH_DIR }}/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
