@@ -64,7 +64,7 @@ jobs:
       with:
         tag_name: v${{ steps.semantic.outputs.new_release_version }}
         body: ${{ steps.semantic.outputs.new_release_notes }}
-        draft: true
+        draft: false
         prerelease: false
         files: ${{ env.PUBLISH_DIR }}/*
       env:
