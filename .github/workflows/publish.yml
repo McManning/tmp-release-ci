@@ -9,6 +9,8 @@ jobs:
   publish:
     name: Publish Packages
     runs-on: windows-latest
+    env:
+      PUBLISH_DIR: publish
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -46,6 +48,12 @@ jobs:
     #   if: steps.semantic.outputs.new_release_published == 'true'
     #   run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
 
+    - name: Archive Packages
+      if: steps.semantic.outputs.new_release_published == 'true'
+      run: |
+        mkdir -p ${{ env.PUBLISH_DIR }}
+        powershell Compress-Archive -Path TestApp/bin/Release/netcoreapp3.1/* -DestinationPath $Env:GITHUB_WORKSPACE/${{ env.PUBLISH_DIR }}/TestApp-${{ runner.os }}-${{ steps.semantic.outputs.new_release_version }}.exe
+
     - name: Publish to GitHub
       if: steps.semantic.outputs.new_release_published == 'true'
       uses: softprops/action-gh-release@v1
@@ -54,10 +62,13 @@ jobs:
         body: ${{ steps.semantic.outputs.new_release_notes }}
         draft: true
         prerelease: false
-        files: 'TestApp/bin/Release/netcoreapp3.1/*'
+        files: ${{ env.PUBLISH_DIR }}/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # - name: Publish to GitHub
     #   if: steps.semantic.outputs.new_release_published == 'true'
     #   run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/McManning/index.json
+
+  # https://github.com/sensuikan1973/pedax/blob/main/.github/workflows/publish.yaml
+  # Cool reference for cross-OS builds.
