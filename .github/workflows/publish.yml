@@ -6,9 +6,12 @@ on:
     paths-ignore: [ '**.md' ]
 
 jobs:
-  publish:
+  build:
     name: Publish Packages
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -25,6 +28,7 @@ jobs:
       run: |
         echo ${{ steps.semantic.outputs.new_release_published }}
         echo ${{ steps.semantic.outputs.new_release_version }}
+        echo ${{ env.GITHUB_WORKSPACE }}
 
     - name: Setup .NET Core
       if: steps.semantic.outputs.new_release_published == 'true'
@@ -36,15 +40,19 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       run: dotnet build --configuration Release -p:Version=${{ steps.semantic.outputs.new_release_version }}
 
-    # - name: Publish to NuGet
-    #   if: steps.semantic.outputs.new_release_published == 'true'
-    #   run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
-
+  publish:
+    needs: [ build ]
+    runs-on: windows-latest
+    steps:
     - name: Publish to GitHub
-      if: steps.semantic.outputs.new_release_published == 'true'
+      if: needs.build.outputs.new_release_published == 'true'
       uses: cycjimmy/semantic-release-action@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # - name: Publish to NuGet
+    #   if: steps.semantic.outputs.new_release_published == 'true'
+    #   run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
 
     # - name: Publish to GitHub
     #   if: steps.semantic.outputs.new_release_published == 'true'
