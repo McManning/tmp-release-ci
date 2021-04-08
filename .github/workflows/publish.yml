@@ -50,9 +50,13 @@ jobs:
 
     - name: Archive Packages
       if: steps.semantic.outputs.new_release_published == 'true'
+      env:
+        PACKAGE_SRC: TestApp/bin/Release/netcoreapp3.1/*
+        # Publish at `publish/TestApp-Windows-1.2.3.zip`
+        PACKAGE_DST: ${{ env.PUBLISH_DIR }}/TestApp-${{ runner.os }}-${{ steps.semantic.outputs.new_release_version }}.zip
       run: |
         mkdir -p ${{ env.PUBLISH_DIR }}
-        powershell Compress-Archive -Path TestApp/bin/Release/netcoreapp3.1/* -DestinationPath $Env:GITHUB_WORKSPACE/${{ env.PUBLISH_DIR }}/TestApp-${{ runner.os }}-${{ steps.semantic.outputs.new_release_version }}.zip
+        powershell Compress-Archive -Path ${{ PACKAGE_SRC }} -DestinationPath $Env:GITHUB_WORKSPACE/${{ PACKAGE_DST }}
 
     - name: Publish to GitHub
       if: steps.semantic.outputs.new_release_published == 'true'
