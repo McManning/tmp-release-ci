@@ -9,9 +9,6 @@ jobs:
   build:
     name: Publish Packages
     runs-on: windows-latest
-    outputs:
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -23,7 +20,6 @@ jobs:
       id: semantic
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        FOO: bar
 
     - name: Setup .NET Core
       if: steps.semantic.outputs.new_release_published == 'true'
