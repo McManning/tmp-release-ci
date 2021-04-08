@@ -28,5 +28,7 @@ namespace TestApp.Tests
         {
             Assert.IsTrue(false);
         }
+
+        // whitespace!
     }
 }
