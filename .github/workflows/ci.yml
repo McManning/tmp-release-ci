@@ -12,6 +12,9 @@ jobs:
   build:
     name: Build
     runs-on: windows-latest
+    # outputs:
+    #   new_release_published: 'true' # ${{ steps.semantic.outputs.new_release_published }}
+    #   new_release_version: '1.1.0-alpha' # ${{ steps.semantic.outputs.new_release_version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -25,32 +28,51 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # MSBuild workflow to support net45
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.0.2
-
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
-
-    - name: Restore NuGet Packages
-      run: nuget restore TestApp.sln
-
-    - name: Build Packages
-      run: msbuild TestApp.sln /p:Configuration=Release /p:Version=1.0.0-alpha
-
-    - name: Run Tests
-      run: dotnet test --no-restore --nologo --verbosity minimal
-
-    # Run again to test release
-    - name: Semantic Release Run 2
+    - name: Run Semantic Release
       uses: cycjimmy/semantic-release-action@v2
       with:
-        dry_run: True
+        dry_run: False
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload TestApp.exe
-      uses: actions/upload-artifact@v2
-      with:
-        name: TestApp
-        path: ${{ env.GITHUB_WORKSPACE }}/TestApp/bin/Release/netcoreapp3.1
+
+  #   # MSBuild workflow to support net45
+  #   - name: Setup MSBuild
+  #     uses: microsoft/setup-msbuild@v1.0.2
+
+  #   - name: Setup NuGet
+  #     uses: NuGet/setup-nuget@v1.0.5
+
+  #   - name: Restore NuGet Packages
+  #     run: nuget restore TestApp.sln
+
+  #   - name: Build Packages
+  #     run: msbuild TestApp.sln /p:Configuration=Release /p:Version=1.0.0-alpha
+
+  #   - name: Run Tests
+  #     run: dotnet test --no-restore --nologo --verbosity minimal
+
+  # publish:
+  #   name: Publish
+  #   runs-on: ubuntu-latest
+  #   if: ${{ true }}
+
+  #   - name: Publish to NuGet
+  #     run: echo ${{ build.outputs.release_version }}
+  #   # Run again to test release
+  #   - name: Semantic Release Run 2
+  #     uses: cycjimmy/semantic-release-action@v2
+  #     with:
+  #       dry_run: True
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  #   - name: Upload TestApp.exe
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: TestApp
+  #       path: ${{ env.GITHUB_WORKSPACE }}/TestApp/bin/Release/netcoreapp3.1
+
+  # Other idea is to split the whole thing. Run once on windows for a release check + build.
+  # Run second job on ubuntu for actual deployment. Pushing the build artifacts between the two.
+  # Tools can be built on ubuntu at least, but the package would need to be built on windows for net45...
