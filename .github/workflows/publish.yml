@@ -13,8 +13,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Run Semantic Release
+    - name: Check for Release
       uses: cycjimmy/semantic-release-action@v2
+      with:
+        dry_run: true
       id: semantic
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -29,9 +31,15 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       run: dotnet build --configuration Release -p:Version=${{ steps.semantic.outputs.new_release_version }} -o packages
 
-    - name: Publish to NuGet
+    # - name: Publish to NuGet
+    #   if: steps.semantic.outputs.new_release_published == 'true'
+    #   run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+
+    - name: Publish to GitHub
       if: steps.semantic.outputs.new_release_published == 'true'
-      run: dotnet nuget push packages/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+      uses: cycjimmy/semantic-release-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # - name: Publish to GitHub
     #   if: steps.semantic.outputs.new_release_published == 'true'
