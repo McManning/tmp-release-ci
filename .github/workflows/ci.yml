@@ -11,21 +11,46 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    # Run once to grab release info
+    - name: Dry Run Semantic Release
+      uses: cycjimmy/semantic-release-action@v2
+      id: semantic
       with:
-        dotnet-version: 3.1.x
+        dry_run: True
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Install Dependencies
-      run: dotnet restore
+    # MSBuild workflow to support net45
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+
+    - name: Restore NuGet Packages
+      run: nuget restore SharpRNA.sln
 
     - name: Build Packages
-      run: dotnet build --configuration Release --no-restore
+      run: msbuild TestApp.sln /p:Configuration=Release /p:Version=1.0.0-alpha
 
     - name: Run Tests
       run: dotnet test --no-restore --nologo --verbosity minimal
+
+    # Run again to test release
+    - name: Semantic Release Run 2
+      uses: cycjimmy/semantic-release-action@v2
+      with:
+        dry_run: True
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload TestApp.exe
+      uses: actions/upload-artifact@v2
+      with:
+        name: TestApp
+        path: ${{ env.GITHUB_WORKSPACE }}/TestApp/bin/Release/netcoreapp3.1
