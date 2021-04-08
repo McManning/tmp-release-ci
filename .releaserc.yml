@@ -9,3 +9,4 @@ plugins:
     - assets:
       - path: TestApp/bin/Release/netcoreapp3.1
         label: TestApp.exe
+
