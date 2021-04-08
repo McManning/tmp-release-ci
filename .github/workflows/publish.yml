@@ -49,8 +49,8 @@ jobs:
       uses: zyborg/dotnet-tests-report@v1
       with:
         project_path: TestApp.Tests
-        report_name: testapp_tests
-        report_title: TestApp Tests
+        report_name: Test
+        report_title: TestApp.Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
         fail_build_on_failed_tests: True
 
