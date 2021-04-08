@@ -14,7 +14,7 @@ jobs:
       PROJECT_NAME: TestApp
       SOLUTION_FILE: TestApp.sln
       RELEASE_ARCHIVE_SRC: TestApp/bin/Release/netcoreapp3.1/*
-      RELEASE_ARCHIVE_NAME: TestApp-${{ runner.os }}
+      RELEASE_ARCHIVE_NAME: TestApp
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -67,7 +67,7 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       env:
         # Cache to at `.github-release/APPNAME-1.2.3.zip`
-        PACKAGE_DST: .github-release/${{ env.RELEASE_ARCHIVE_NAME }}-${{ steps.semantic.outputs.new_release_version }}.zip
+        PACKAGE_DST: .github-release/${{ env.RELEASE_ARCHIVE_NAME }}-${{ runner.os }}-${{ steps.semantic.outputs.new_release_version }}.zip
       run: |
         mkdir -p .github-release
         powershell Compress-Archive -Path ${{ env.RELEASE_ARCHIVE_SRC }} -DestinationPath $Env:GITHUB_WORKSPACE/${{ env.PACKAGE_DST }}
