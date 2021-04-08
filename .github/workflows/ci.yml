@@ -33,7 +33,7 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5
 
     - name: Restore NuGet Packages
-      run: nuget restore SharpRNA.sln
+      run: nuget restore TestApp.sln
 
     - name: Build Packages
       run: msbuild TestApp.sln /p:Configuration=Release /p:Version=1.0.0-alpha
