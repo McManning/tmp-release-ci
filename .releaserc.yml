@@ -1,10 +1,6 @@
 branches:
   - master
-dryRun: false
+dryRun: true
 plugins:
   - "@semantic-release/commit-analyzer"
   - "@semantic-release/release-notes-generator"
-  - - "@semantic-release/github"
-    - assets:
-      - path: TestApp/bin/Release/netcoreapp3.1
-        label: TestApp.exe
