@@ -17,18 +17,5 @@ namespace TestApp.Tests
             Assert.IsTrue(false);
         }
 
-        [TestMethod]
-        public void TestMethod3()
-        {
-            Assert.IsTrue(false);
-        }
-
-        [TestMethod]
-        public void TestMethod4()
-        {
-            Assert.IsTrue(false);
-        }
-
-        // whitespace!
     }
 }
