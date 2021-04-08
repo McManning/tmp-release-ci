@@ -17,6 +17,8 @@ jobs:
     - name: Check for Release
       uses: cycjimmy/semantic-release-action@v2
       id: semantic
+      with:
+        dry_run: True
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
