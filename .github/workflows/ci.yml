@@ -35,4 +35,4 @@ jobs:
         report_name: tests
         report_title: TestApp Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        fail_check_on_failed_tests: True
+        set_check_status_from_test_outcome: True
