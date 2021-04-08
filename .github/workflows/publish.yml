@@ -52,6 +52,7 @@ jobs:
         report_name: testapp_tests
         report_title: TestApp Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        set_check_status_from_test_outcome: True
 
     # - name: Publish to NuGet
     #   if: steps.semantic.outputs.new_release_published == 'true'
