@@ -4,4 +4,8 @@ dryRun: false
 plugins:
   - "@semantic-release/commit-analyzer"
   - "@semantic-release/release-notes-generator"
-  - "@semantic-release/github"
+  -
+    - "@semantic-release/github"
+    - assets:
+      - path: TestApp/bin/Release/netcoreapp3.1
+        label: TestApp.exe
